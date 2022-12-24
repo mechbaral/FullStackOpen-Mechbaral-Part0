@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
 participant browser
 participant server
@@ -14,3 +15,4 @@ browser->>server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
 Note right of server: Fetch the updated file
 server-->>browser: data.json [{ content: "This is from postman", date: "2022-12-24" }, ...]
 Note over browser: browser executes the event handler that renders notes to display
+```
