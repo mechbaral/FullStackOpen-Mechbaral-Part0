@@ -1,3 +1,4 @@
+```mermaid
 note over browser:
 User Type the note content in the text field and hit Save button button
 end note
@@ -23,3 +24,4 @@ note over browser:
 browser executes the event handler
 that renders notes to display
 end note
+```
