@@ -14,6 +14,8 @@ const App = () => {
   const [selected, setSelected] = useState(0)
   const [votes,setVotes]=useState(new Uint8Array(anecdotes.length))
 
+  const most = votes.indexOf(Math.max(...votes))
+
   const randomise =()=>setSelected(Math.floor(Math.random()*anecdotes.length))
 
 
@@ -31,6 +33,11 @@ const App = () => {
       <br/>
       <button onClick={handleVote}> vote</button>
       <button onClick={randomise}>next anecdotes</button>
+      <h1>Anectode with the most votes</h1>
+      {anecdotes[most]}
+      <br/>
+      has {votes[most]} votes
+      <br/>
     </div>
   )
 }
