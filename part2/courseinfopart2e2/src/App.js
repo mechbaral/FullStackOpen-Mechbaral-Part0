@@ -1,10 +1,3 @@
-const Total = (props)=>{
-  const {arraytotal} = props
-  return(
-        <div><b>total of {(arraytotal.reduce((a,v)=> a=a+v.exercises,0))} exercises</b></div>
-    )
-}
-
 const Part =(props)=>{
   const {part}=props
   return(
@@ -33,7 +26,6 @@ const Course = (props)=>{
     <div>
       <Header header ={course.name} />
       <Content content ={course.parts} />
-      <Total arraytotal={course.parts}/>
     </div>
   )
 }
