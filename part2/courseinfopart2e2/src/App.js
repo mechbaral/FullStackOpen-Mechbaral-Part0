@@ -1,8 +1,10 @@
 const Total = (props)=>{
-  const {arraytotal} = props
-  return(
-        <div><b>total of {(arraytotal.reduce((a,v)=> a=a+v.exercises,0))} exercises</b></div>
-    )
+  let total = 0
+  const {arrparts}=props
+  arrparts.forEach(function(arrayelement){
+    total += arrayelement.exercises
+  });
+  return(<div>The sum of exercise is {total}</div>)
 }
 
 const Part =(props)=>{
@@ -19,6 +21,7 @@ const Content=(props)=>{
   const {content}=props
   return ( <div>
     {content.map(part => <Part key={part.id}  part={part} />)}
+
   </div>)
 }
 const Header=(props)=>{
@@ -33,7 +36,7 @@ const Course = (props)=>{
     <div>
       <Header header ={course.name} />
       <Content content ={course.parts} />
-      <Total arraytotal={course.parts}/>
+      <Total arrparts ={course.parts} />
     </div>
   )
 }
