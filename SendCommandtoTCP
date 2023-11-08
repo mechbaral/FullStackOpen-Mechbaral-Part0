@@ -1,0 +1,85 @@
+const net = require("net");
+
+let createApiCommand = (
+  scooter = "356307042441013",
+  command = "sclockctrl 0"
+) => {
+  let zeroBytes = Buffer.from([0, 0, 0, 0]); // Fix
+
+  let codecID = Buffer.from("0C", "hex"); // Fix
+  let commandQuantity1 = Buffer.from([1]); // Fix
+  let commandType = Buffer.from([5]); // Fix
+  let imei = Buffer.from(scooter, "ascii"); // Var
+  let imeiSize = String(Buffer.from([imei.length]).toString("hex")).padStart(
+    4,
+    "0"
+  ); // Var
+  let commandBuff = Buffer.from(command, "ascii");
+  let commandSize = String(
+    Buffer.from([commandBuff.length]).toString("hex")
+  ).padStart(8, "0"); // Var
+  let commandQuantity2 = Buffer.from([1]); // Fix
+  let crc16 = "00004312"; // ???
+
+  let dataStr = "";
+  dataStr += codecID.toString("hex");
+  dataStr += commandQuantity1.toString("hex");
+  dataStr += commandType.toString("hex");
+  dataStr += imeiSize.toString("hex");
+  dataStr += imei.toString("hex");
+  dataStr += commandSize.toString("hex");
+  dataStr += commandBuff.toString("hex");
+  dataStr += commandQuantity2.toString("hex");
+
+  let dataBuff = Buffer.from(dataStr, "hex");
+
+  let dataLength = String(
+    Buffer.from([dataBuff.length]).toString("hex")
+  ).padStart(8, "0"); // var (size is calculated from Codec ID field to the second command or response quantity field.)
+
+  let cmd = "";
+  cmd += zeroBytes.toString("hex");
+  cmd += dataLength;
+  cmd += dataStr;
+  cmd += crc16;
+
+  return cmd;
+};
+
+let apiCommand = Buffer.from(
+  //createApiCommand("350544507593914", "scbuzzerctrl 1 5"),
+  //createApiCommand("350544507593914", "scsetbeepctrl 1 2"), // This imei is for TST
+  //createApiCommand("350317179251321", "getgps"), //This imei is for TFT
+  //createApiCommand("350317179251321", "setdigout ?0"),
+  //createApiCommand("350612070216385", "setdigout ?0"),
+  //createApiCommand("350317179251321", "getinfo"),
+  //createApiCommand("350612070216385", "setdigout ?1"), //(Turn on Dig out2)
+  //createApiCommand("350612070216385", "setdigout ?0"), //(Turn off Dig out 2)
+  //createApiCommand("350612070216385", "setdigout 1?"),
+  //createApiCommand("350612070216385", "setdigout 0?"),
+  //createApiCommand("350317179251321", "setdigout 0?"),
+  //createApiCommand("350317179251321","flush 350317179251321,wireless.twilio.com,,,ezmobilityrentals-iot.joyridecity.bike,5021,0"),
+  createApiCommand("350612070216385","cpureset"),
+  //createApiCommand("350317179251321","deleterecords"),
+  //createApiCommand("350612070216385","web_connect"),
+  "hex"
+);
+// console.log(apiCommand.toString("hex"));
+
+const socket = new net.Socket();
+
+socket.connect(5004,"staging-iot.joyridecity.bike");
+// socket.connect(7001, "127.0.0.1");
+socket.on("connect", () => {
+  socket.write(apiCommand);
+});
+
+socket.on("close", () => {
+  console.log("Connection closed by remote server");
+  process.exit(0);
+});
+
+socket.on("data", (data) => {
+  console.log("Hex response from server: ", data.toString("hex"));
+  console.log("Ascii response from server: ", data.toString("ascii"));
+});
